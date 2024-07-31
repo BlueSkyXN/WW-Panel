@@ -129,10 +129,10 @@ export default {
         {
           title: '技能参数',
           fields: [
-            { label: '目标技能倍率', value: 1.00, step: 0.01 },
-            { label: '目标技能伤害百分比', value: 0.00, step: 0.01 },
+            { label: '目标技能倍率', value: 12.1275, step: 0.01 },
+            { label: '目标技能伤害百分比', value: 0.80, step: 0.01 },
             { label: '目标技能额外攻击百分比', value: 0.00, step: 0.01 },
-            { label: '目标技能穿甲提升百分比', value: 0.00, step: 0.01 },
+            { label: '目标技能穿甲提升百分比', value: 0.30, step: 0.01 },
             { label: '目标元素伤害抗性百分比', value: 0.10, step: 0.01 }
           ]
         }
