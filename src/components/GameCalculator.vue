@@ -13,7 +13,7 @@
                   :label="field.label"
                   v-model.number="field.value"
                   type="number"
-                  :step="field.step || 0.01"
+                  :step="field.step"
                   outlined
                   dense
                 ></v-text-field>
@@ -50,27 +50,27 @@ export default {
           title: '基本信息',
           fields: [
             { label: '初始暴击率', value: 0.05, step: 0.01 },
-            { label: '初始暴击伤害', value: 1.5, step: 0.01 },
+            { label: '初始暴击伤害', value: 1.50, step: 0.01 },
             { label: '角色攻击白值', value: 462, step: 1 },
-            { label: '武器攻击白值', value: 587, step: 1 },
+            { label: '武器攻击白值', value: 587, step: 1 }
           ]
         },
         {
           title: '天赋',
           fields: [
             { label: '天赋暴击率', value: 0.08, step: 0.01 },
-            { label: '天赋暴击伤害', value: 0, step: 0.01 },
+            { label: '天赋暴击伤害', value: 0.00, step: 0.01 },
             { label: '天赋攻击百分比', value: 0.12, step: 0.01 },
-            { label: '天赋元素伤害百分比', value: 0, step: 0.01 },
+            { label: '天赋元素伤害百分比', value: 0.00, step: 0.01 }
           ]
         },
         {
           title: '武器',
           fields: [
-            { label: '武器暴击率', value: 0, step: 0.01 },
+            { label: '武器暴击率', value: 0.00, step: 0.01 },
             { label: '武器暴击伤害', value: 0.484, step: 0.01 },
             { label: '武器攻击百分比', value: 0.24, step: 0.01 },
-            { label: '武器元素伤害百分比', value: 0, step: 0.01 },
+            { label: '武器元素伤害百分比', value: 0.00, step: 0.01 }
           ]
         },
         {
@@ -80,62 +80,40 @@ export default {
             { label: '声骸暴击伤害', value: 1.136, step: 0.01 },
             { label: '声骸攻击百分比', value: 0.69, step: 0.01 },
             { label: '声骸攻击固定值', value: 390, step: 1 },
-            { label: '声骸元素伤害百分比', value: 0.6, step: 0.01 },
+            { label: '声骸元素伤害百分比', value: 0.60, step: 0.01 }
           ]
         },
         {
           title: '其他',
           fields: [
             { label: '其他暴击率', value: 0.25, step: 0.01 },
-            { label: '其他暴击伤害', value: 0, step: 0.01 },
+            { label: '其他暴击伤害', value: 0.00, step: 0.01 },
             { label: '其他攻击百分比', value: 0.35, step: 0.01 },
-            { label: '其他攻击固定值', value: 0, step: 1 },
-            { label: '其他元素伤害百分比', value: 0.1, step: 0.01 },
+            { label: '其他攻击固定值', value: 0.00, step: 1 },
+            { label: '其他元素伤害百分比', value: 0.10, step: 0.01 }
           ]
-        },
+        }
       ]
     };
   },
   computed: {
     finalCritRate() {
-      return (
-        this.basicInfo[0].value + 
-        this.talents[0].value + 
-        this.weapons[0].value + 
-        this.relics[0].value + 
-        this.others[0].value
-      );
+      return this.sumFieldValues('暴击率');
     },
     finalCritDamage() {
-      return (
-        this.basicInfo[1].value + 
-        this.talents[1].value + 
-        this.weapons[1].value + 
-        this.relics[1].value + 
-        this.others[1].value
-      );
+      return this.sumFieldValues('暴击伤害');
     },
     finalAttackPercent() {
-      return (
-        this.talents[2].value + 
-        this.weapons[2].value + 
-        this.relics[2].value + 
-        this.others[2].value
-      );
+      return this.sumFieldValues('攻击百分比');
     },
     finalAttackFixed() {
-      return this.relics[3].value + this.others[3].value;
+      return this.sumFieldValues('攻击固定值');
     },
     finalElementDamagePercent() {
-      return (
-        this.talents[3].value + 
-        this.weapons[3].value + 
-        this.relics[4].value + 
-        this.others[4].value
-      );
+      return this.sumFieldValues('元素伤害百分比');
     },
     finalActualAttack() {
-      const baseAttack = this.basicInfo[2].value + this.basicInfo[3].value;
+      const baseAttack = this.getFieldValue('角色攻击白值') + this.getFieldValue('武器攻击白值');
       return baseAttack * (1 + this.finalAttackPercent) + this.finalAttackFixed;
     },
     finalDamageBase() {
@@ -143,6 +121,32 @@ export default {
       return (
         (actualAttack * this.finalCritRate * this.finalCritDamage + actualAttack * (1 - this.finalCritRate)) * (1 + this.finalElementDamagePercent)
       );
+    },
+    calculatedResults() {
+      return [
+        { label: '最终暴击率', value: this.finalCritRate },
+        { label: '最终暴击伤害', value: this.finalCritDamage },
+        { label: '最终攻击百分比', value: this.finalAttackPercent },
+        { label: '最终攻击固定值', value: this.finalAttackFixed },
+        { label: '最终元素伤害百分比', value: this.finalElementDamagePercent },
+        { label: '最终实际攻击', value: this.finalActualAttack },
+        { label: '最终实际伤害基值', value: this.finalDamageBase }
+      ];
+    }
+  },
+  methods: {
+    sumFieldValues(fieldName) {
+      return this.parameterGroups.reduce((sum, group) => {
+        const field = group.fields.find(f => f.label.includes(fieldName));
+        return sum + (field ? field.value : 0);
+      }, 0);
+    },
+    getFieldValue(fieldName) {
+      for (const group of this.parameterGroups) {
+        const field = group.fields.find(f => f.label === fieldName);
+        if (field) return field.value;
+      }
+      return 0;
     }
   }
 }
