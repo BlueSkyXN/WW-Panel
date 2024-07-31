@@ -63,17 +63,17 @@ export default {
   name: 'GameCalculator',
   data() {
     return {
-      baseCritRate: 0,
-      baseCritDamage: 0,
-      baseAttack: 0,
-      weaponAttack: 0,
-      talentCritRate: 0,
-      talentCritDamage: 0,
-      extraCritRate: 0,
-      extraCritDamage: 0,
-      extraAttackPercent: 0,
-      extraAttackFixed: 0,
-      extraElementDamagePercent: 0,
+      baseCritRate: 0.05,
+      baseCritDamage: 1.50,
+      baseAttack: 462.00,
+      weaponAttack: 587.00,
+      talentCritRate: 0.08,
+      talentCritDamage: 0.00,
+      extraCritRate: 0.25,
+      extraCritDamage: 0.00,
+      extraAttackPercent: 0.35,
+      extraAttackFixed: 0.00,
+      extraElementDamagePercent: 0.10,
       result: null
     };
   },
