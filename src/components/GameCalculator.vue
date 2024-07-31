@@ -69,30 +69,14 @@
           v-model.number="field.value"
         ></v-text-field>
       </v-col>
-    </v-row>
     
     <v-divider></v-divider>
 
-    <!-- 计算结果展示部分 -->
-    <v-row>
-      <v-col cols="12" md="6">
-        <v-card>
-          <v-card-title>计算结果</v-card-title>
-          <v-card-text>
-            <p>最终暴击率: {{ finalCritRate.toFixed(3) }}</p>
-            <p>最终暴击伤害: {{ finalCritDamage.toFixed(3) }}</p>
-            <p>最终攻击百分比: {{ finalAttackPercent.toFixed(3) }}</p>
-            <p>最终攻击固定值: {{ finalAttackFixed }}</p>
-            <p>最终元素伤害百分比: {{ finalElementDamagePercent.toFixed(3) }}</p>
-          </v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="1">
+    <v-col cols="12" md="6">
         <v-divider vertical></v-divider>
       </v-col>
 
-      <v-col cols="12" md="5">
+    <v-col cols="12" md="6">
         <v-card>
           <v-card-title>计算结果</v-card-title>
           <v-card-text>
