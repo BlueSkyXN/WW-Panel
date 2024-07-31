@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h2>数值计算器</h2>
+    <h2>攻击x暴击x元素伤害的基值计算器</h2>
     <v-divider></v-divider>
     
     <h3>基本信息</h3>
@@ -69,23 +69,23 @@
           v-model.number="field.value"
         ></v-text-field>
       </v-col>
-    </v-row>
     
     <v-divider></v-divider>
-    
-    <h3>计算结果</h3>
-    <v-card>
-      <v-card-title>计算结果</v-card-title>
-      <v-card-text>
-        <p>最终暴击率: {{ finalCritRate.toFixed(3) }}</p>
-        <p>最终暴击伤害: {{ finalCritDamage.toFixed(3) }}</p>
-        <p>最终攻击百分比: {{ finalAttackPercent.toFixed(3) }}</p>
-        <p>最终攻击固定值: {{ finalAttackFixed }}</p>
-        <p>最终元素伤害百分比: {{ finalElementDamagePercent.toFixed(3) }}</p>
-        <p>最终实际攻击: {{ finalActualAttack.toFixed(3) }}</p>
-        <p>最终实际伤害基值: {{ finalDamageBase.toFixed(3) }}</p>
-      </v-card-text>
-    </v-card>
+
+    <v-col cols="12" md="6">
+        <v-divider vertical></v-divider>
+      </v-col>
+
+    <v-col cols="12" md="6">
+        <v-card>
+          <v-card-title>计算结果</v-card-title>
+          <v-card-text>
+            <p>最终实际攻击: {{ finalActualAttack.toFixed(3) }}</p>
+            <p>最终实际伤害基值: {{ finalDamageBase.toFixed(3) }}</p>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -191,6 +191,11 @@ export default {
 }
 
 .v-col {
-  padding: 8px; /* Add some padding to ensure spacing between columns */
+  padding: 8px;
+}
+
+.v-divider.vertical {
+  height: 100%;
+  margin: 0;
 }
 </style>
