@@ -5,7 +5,7 @@
     
     <h3>基本信息</h3>
     <v-row>
-      <v-col cols="12" sm="6" md="4" v-for="field in basicInfo" :key="field.model">
+      <v-col cols="12" sm="6" md="4" lg="2" v-for="field in basicInfo" :key="field.model">
         <v-text-field
           :label="field.label"
           :type="field.type"
@@ -19,7 +19,7 @@
     
     <h3>天赋</h3>
     <v-row>
-      <v-col cols="12" sm="6" md="4" v-for="field in talents" :key="field.model">
+      <v-col cols="12" sm="6" md="4" lg="2" v-for="field in talents" :key="field.model">
         <v-text-field
           :label="field.label"
           :type="field.type"
@@ -33,7 +33,7 @@
     
     <h3>武器</h3>
     <v-row>
-      <v-col cols="12" sm="6" md="4" v-for="field in weapons" :key="field.model">
+      <v-col cols="12" sm="6" md="4" lg="2" v-for="field in weapons" :key="field.model">
         <v-text-field
           :label="field.label"
           :type="field.type"
@@ -47,7 +47,7 @@
     
     <h3>声骸</h3>
     <v-row>
-      <v-col cols="12" sm="6" md="4" v-for="field in relics" :key="field.model">
+      <v-col cols="12" sm="6" md="4" lg="2" v-for="field in relics" :key="field.model">
         <v-text-field
           :label="field.label"
           :type="field.type"
@@ -61,7 +61,7 @@
     
     <h3>其他</h3>
     <v-row>
-      <v-col cols="12" sm="6" md="4" v-for="field in others" :key="field.model">
+      <v-col cols="12" sm="6" md="4" lg="2" v-for="field in others" :key="field.model">
         <v-text-field
           :label="field.label"
           :type="field.type"
