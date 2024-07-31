@@ -102,6 +102,57 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <v-divider></v-divider>
+
+    <!-- 预测提升率区 -->
+    <h3>预测提升率</h3>
+    <v-row>
+      <v-col cols="12" md="6">
+        <v-card>
+          <v-card-title>提升1%暴击率</v-card-title>
+          <v-card-text>
+            <p>提升后的最终实际伤害基值提升率: {{ percentCritRateIncrease.toFixed(3) }}%</p>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <v-col cols="12" md="6">
+        <v-card>
+          <v-card-title>提升1%暴击伤害</v-card-title>
+          <v-card-text>
+            <p>提升后的最终实际伤害基值提升率: {{ percentCritDamageIncrease.toFixed(3) }}%</p>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <v-col cols="12" md="6">
+        <v-card>
+          <v-card-title>提升1%攻击百分比</v-card-title>
+          <v-card-text>
+            <p>提升后的最终实际伤害基值提升率: {{ percentAttackPercentIncrease.toFixed(3) }}%</p>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <v-col cols="12" md="6">
+        <v-card>
+          <v-card-title>提升10点攻击百分比</v-card-title>
+          <v-card-text>
+            <p>提升后的最终实际伤害基值提升率: {{ tenPercentAttackPercentIncrease.toFixed(3) }}%</p>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <v-col cols="12" md="6">
+        <v-card>
+          <v-card-title>提升1%元素伤害百分比</v-card-title>
+          <v-card-text>
+            <p>提升后的最终实际伤害基值提升率: {{ percentElementDamagePercentIncrease.toFixed(3) }}%</p>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -191,6 +242,41 @@ export default {
       return (
         (actualAttack * this.finalCritRate * this.finalCritDamage + actualAttack * (1 - this.finalCritRate)) * (1 + this.finalElementDamagePercent)
       );
+    },
+    percentCritRateIncrease() {
+      const originalDamageBase = this.finalDamageBase;
+      this.basicInfo[0].value += 0.01;
+      const newDamageBase = this.finalDamageBase;
+      this.basicInfo[0].value -= 0.01;
+      return ((newDamageBase - originalDamageBase) / originalDamageBase) * 100;
+    },
+    percentCritDamageIncrease() {
+      const originalDamageBase = this.finalDamageBase;
+      this.talents[1].value += 0.01;
+      const newDamageBase = this.finalDamageBase;
+      this.talents[1].value -= 0.01;
+      return ((newDamageBase - originalDamageBase) / originalDamageBase) * 100;
+    },
+    percentAttackPercentIncrease() {
+      const originalDamageBase = this.finalDamageBase;
+      this.talents[2].value += 0.01;
+      const newDamageBase = this.finalDamageBase;
+      this.talents[2].value -= 0.01;
+      return ((newDamageBase - originalDamageBase) / originalDamageBase) * 100;
+    },
+    tenPercentAttackPercentIncrease() {
+      const originalDamageBase = this.finalDamageBase;
+      this.talents[2].value += 0.10;
+      const newDamageBase = this.finalDamageBase;
+      this.talents[2].value -= 0.10;
+      return ((newDamageBase - originalDamageBase) / originalDamageBase) * 100;
+    },
+    percentElementDamagePercentIncrease() {
+      const originalDamageBase = this.finalDamageBase;
+      this.talents[3].value += 0.01;
+      const newDamageBase = this.finalDamageBase;
+      this.talents[3].value -= 0.01;
+      return ((newDamageBase - originalDamageBase) / originalDamageBase) * 100;
     }
   }
 }
