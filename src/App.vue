@@ -1,23 +1,29 @@
 <template>
   <v-app>
     <v-main>
-      <HelloWorld/>
+      <v-container>
+        <GameCalculator />
+      </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import GameCalculator from './components/GameCalculator.vue';
 
 export default {
   name: 'App',
-
   components: {
-    HelloWorld,
-  },
-
-  data: () => ({
-    //
-  }),
+    GameCalculator
+  }
 }
 </script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+</style>
