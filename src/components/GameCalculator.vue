@@ -1,61 +1,34 @@
 <template>
-  <div>
-    <h2>数值计算器</h2>
-    <form @submit.prevent="calculate">
-      <div>
-        <label for="baseCritRate">初始暴击率:</label>
-        <input type="number" v-model="baseCritRate" id="baseCritRate" step="0.01" required>
-      </div>
-      <div>
-        <label for="baseCritDamage">初始暴击伤害:</label>
-        <input type="number" v-model="baseCritDamage" id="baseCritDamage" step="0.01" required>
-      </div>
-      <div>
-        <label for="baseAttack">角色攻击白值:</label>
-        <input type="number" v-model="baseAttack" id="baseAttack" step="1" required>
-      </div>
-      <div>
-        <label for="weaponAttack">武器攻击白值:</label>
-        <input type="number" v-model="weaponAttack" id="weaponAttack" step="1" required>
-      </div>
-      <div>
-        <label for="talentCritRate">天赋暴击率:</label>
-        <input type="number" v-model="talentCritRate" id="talentCritRate" step="0.01" required>
-      </div>
-      <div>
-        <label for="talentCritDamage">天赋暴击伤害:</label>
-        <input type="number" v-model="talentCritDamage" id="talentCritDamage" step="0.01" required>
-      </div>
-      <div>
-        <label for="extraCritRate">其他暴击率:</label>
-        <input type="number" v-model="extraCritRate" id="extraCritRate" step="0.01" required>
-      </div>
-      <div>
-        <label for="extraCritDamage">其他暴击伤害:</label>
-        <input type="number" v-model="extraCritDamage" id="extraCritDamage" step="0.01" required>
-      </div>
-      <div>
-        <label for="extraAttackPercent">其他攻击百分比:</label>
-        <input type="number" v-model="extraAttackPercent" id="extraAttackPercent" step="0.01" required>
-      </div>
-      <div>
-        <label for="extraAttackFixed">其他攻击固定值:</label>
-        <input type="number" v-model="extraAttackFixed" id="extraAttackFixed" step="1" required>
-      </div>
-      <div>
-        <label for="extraElementDamagePercent">其他元素伤害百分比:</label>
-        <input type="number" v-model="extraElementDamagePercent" id="extraElementDamagePercent" step="0.01" required>
-      </div>
-      <button type="submit">计算</button>
-    </form>
-    <div v-if="result">
-      <h3>计算结果</h3>
-      <p>总暴击率: {{ result.totalCritRate }}</p>
-      <p>总暴击伤害: {{ result.totalCritDamage }}</p>
-      <p>总攻击力: {{ result.totalAttack }}</p>
-      <p>总元素伤害百分比: {{ result.totalElementDamagePercent }}</p>
-    </div>
-  </div>
+  <v-container>
+    <v-row>
+      <v-col cols="12">
+        <h2>数值计算器</h2>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="6" v-for="field in fields" :key="field.model">
+        <v-text-field
+          :label="field.label"
+          :type="field.type"
+          :step="field.step"
+          v-model="field.value"
+        ></v-text-field>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <v-card>
+          <v-card-title>计算结果</v-card-title>
+          <v-card-text>
+            <p>总暴击率: {{ totalCritRate }}</p>
+            <p>总暴击伤害: {{ totalCritDamage }}</p>
+            <p>总攻击力: {{ totalAttack }}</p>
+            <p>总元素伤害百分比: {{ totalElementDamagePercent }}</p>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -63,35 +36,48 @@ export default {
   name: 'GameCalculator',
   data() {
     return {
-      baseCritRate: 0.05,
-      baseCritDamage: 1.50,
-      baseAttack: 462.00,
-      weaponAttack: 587.00,
-      talentCritRate: 0.08,
-      talentCritDamage: 0.00,
-      extraCritRate: 0.25,
-      extraCritDamage: 0.00,
-      extraAttackPercent: 0.35,
-      extraAttackFixed: 0.00,
-      extraElementDamagePercent: 0.10,
-      result: null
+      fields: [
+        { label: '初始暴击率', model: 'baseCritRate', value: 0.05, type: 'number', step: 0.01 },
+        { label: '初始暴击伤害', model: 'baseCritDamage', value: 1.50, type: 'number', step: 0.01 },
+        { label: '角色攻击白值', model: 'baseAttack', value: 462, type: 'number', step: 1 },
+        { label: '武器攻击白值', model: 'weaponAttack', value: 587, type: 'number', step: 1 },
+        { label: '天赋暴击率', model: 'talentCritRate', value: 0.08, type: 'number', step: 0.01 },
+        { label: '天赋暴击伤害', model: 'talentCritDamage', value: 0.00, type: 'number', step: 0.01 },
+        { label: '其他暴击率', model: 'extraCritRate', value: 0.25, type: 'number', step: 0.01 },
+        { label: '其他暴击伤害', model: 'extraCritDamage', value: 0.00, type: 'number', step: 0.01 },
+        { label: '其他攻击百分比', model: 'extraAttackPercent', value: 0.35, type: 'number', step: 0.01 },
+        { label: '其他攻击固定值', model: 'extraAttackFixed', value: 0.00, type: 'number', step: 1 },
+        { label: '其他元素伤害百分比', model: 'extraElementDamagePercent', value: 0.10, type: 'number', step: 0.01 }
+      ]
     };
   },
-  methods: {
-    calculate() {
-      const totalCritRate = this.baseCritRate + this.talentCritRate + this.extraCritRate;
-      const totalCritDamage = this.baseCritDamage + this.talentCritDamage + this.extraCritDamage;
-      const totalAttack = this.baseAttack + this.weaponAttack + (this.baseAttack + this.weaponAttack) * this.extraAttackPercent + this.extraAttackFixed;
-      const totalElementDamagePercent = this.extraElementDamagePercent;
-
-      this.result = { totalCritRate, totalCritDamage, totalAttack, totalElementDamagePercent };
+  computed: {
+    totalCritRate() {
+      return this.fields.find(field => field.model === 'baseCritRate').value + 
+             this.fields.find(field => field.model === 'talentCritRate').value + 
+             this.fields.find(field => field.model === 'extraCritRate').value;
+    },
+    totalCritDamage() {
+      return this.fields.find(field => field.model === 'baseCritDamage').value + 
+             this.fields.find(field => field.model === 'talentCritDamage').value + 
+             this.fields.find(field => field.model === 'extraCritDamage').value;
+    },
+    totalAttack() {
+      const baseAttack = this.fields.find(field => field.model === 'baseAttack').value + 
+                        this.fields.find(field => field.model === 'weaponAttack').value;
+      return baseAttack + baseAttack * this.fields.find(field => field.model === 'extraAttackPercent').value + 
+             this.fields.find(field => field.model === 'extraAttackFixed').value;
+    },
+    totalElementDamagePercent() {
+      return this.fields.find(field => field.model === 'extraElementDamagePercent').value;
     }
   }
 }
 </script>
 
 <style>
-form div {
-  margin-bottom: 1em;
+.v-container {
+  max-width: 600px;
+  margin: 0 auto;
 }
 </style>
