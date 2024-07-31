@@ -1,17 +1,17 @@
 <template>
   <div id="app">
     <h1>游戏数值计算器</h1>
-    <Calculator />
+    <GameCalculator />
   </div>
 </template>
 
 <script>
-import Calculator from './components/Calculator.vue';
+import GameCalculator from './components/GameCalculator.vue';
 
 export default {
   name: 'App',
   components: {
-    Calculator
+    GameCalculator
   }
 }
 </script>

@@ -30,6 +30,7 @@
 
 <script>
 export default {
+  name: 'GameCalculator',
   data() {
     return {
       baseCritRate: 0,
