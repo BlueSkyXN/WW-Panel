@@ -69,16 +69,23 @@
           v-model.number="field.value"
         ></v-text-field>
       </v-col>
-    </v-row>
     
     <v-divider></v-divider>
 
+<<<<<<< HEAD
     <v-row>
       <v-col cols="12" md="6">
         <v-divider vertical></v-divider>
       </v-col>
 
       <v-col cols="12" md="6">
+=======
+    <v-col cols="12" md="6">
+        <v-divider vertical></v-divider>
+      </v-col>
+
+    <v-col cols="12" md="6">
+>>>>>>> parent of 5b57222 (0.1.8)
         <v-card>
           <v-card-title>计算结果</v-card-title>
           <v-card-text>
