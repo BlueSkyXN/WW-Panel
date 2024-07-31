@@ -130,7 +130,10 @@ export default {
           title: '技能参数',
           fields: [
             { label: '目标技能倍率', value: 1.00, step: 0.01 },
-            { label: '目标技能伤害百分比', value: 0.00, step: 0.01 }
+            { label: '目标技能伤害百分比', value: 0.00, step: 0.01 },
+            { label: '目标技能额外攻击百分比', value: 0.00, step: 0.01 },
+            { label: '目标技能穿甲提升百分比', value: 0.00, step: 0.01 },
+            { label: '目标元素伤害抗性百分比', value: 0.10, step: 0.01 }
           ]
         }
       ]
@@ -152,28 +155,40 @@ export default {
     finalElementDamagePercent() {
       return this.sumFieldValues('元素伤害百分比');
     },
-    finalActualAttack() {
-      const baseAttack = this.getFieldValue('角色攻击白值') + this.getFieldValue('武器攻击白值');
-      return baseAttack * (1 + this.finalAttackPercent) + this.finalAttackFixed;
-    },
-    finalDamageBase() {
-      return this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, this.finalActualAttack, this.finalElementDamagePercent);
-    },
     skillMultiplier() {
       return this.getFieldValue('目标技能倍率');
     },
     skillDamagePercent() {
       return this.getFieldValue('目标技能伤害百分比');
     },
+    skillExtraAttackPercent() {
+      return this.getFieldValue('目标技能额外攻击百分比');
+    },
+    skillPenetrationPercent() {
+      return this.getFieldValue('目标技能穿甲提升百分比');
+    },
+    elementResistancePercent() {
+      return this.getFieldValue('目标元素伤害抗性百分比');
+    },
+    finalActualAttack() {
+      const baseAttack = this.getFieldValue('角色攻击白值') + this.getFieldValue('武器攻击白值');
+      return baseAttack * (1 + this.finalAttackPercent + this.skillExtraAttackPercent) + this.finalAttackFixed;
+    },
+    finalDamageBase() {
+      return this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, this.finalActualAttack, this.finalElementDamagePercent);
+    },
     finalSkillDamage() {
       const totalDamagePercent = this.finalElementDamagePercent + this.skillDamagePercent;
-      return this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, this.finalActualAttack, totalDamagePercent) * this.skillMultiplier;
+      let damage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, this.finalActualAttack, totalDamagePercent) * this.skillMultiplier;
+      damage *= (1 + this.skillPenetrationPercent);
+      damage *= (1 - this.elementResistancePercent);
+      return damage;
     },
     calculatedResults() {
       return [
         { label: '最终暴击率', value: this.finalCritRate },
         { label: '最终暴击伤害', value: this.finalCritDamage },
-        { label: '最终攻击百分比', value: this.finalAttackPercent },
+        { label: '最终攻击百分比', value: this.finalAttackPercent + this.skillExtraAttackPercent },
         { label: '最终攻击固定值', value: this.finalAttackFixed },
         { label: '最终元素伤害百分比', value: this.finalElementDamagePercent },
         { label: '最终实际攻击', value: this.finalActualAttack },
@@ -210,7 +225,7 @@ export default {
     },
     calculateActualAttack(attackPercent, attackFixed) {
       const baseAttack = this.getFieldValue('角色攻击白值') + this.getFieldValue('武器攻击白值');
-      return baseAttack * (1 + attackPercent) + attackFixed;
+      return baseAttack * (1 + attackPercent + this.skillExtraAttackPercent) + attackFixed;
     },
     calculateImprovement(attribute, amount) {
       const originalDamage = this.finalSkillDamage;
@@ -218,29 +233,35 @@ export default {
 
       switch (attribute) {
         case 'critRate':
-          newDamage = this.calculateDamageBase(this.finalCritRate + amount, this.finalCritDamage, this.finalActualAttack, this.finalElementDamagePercent + this.skillDamagePercent) * this.skillMultiplier;
+          newDamage = this.calculateNewDamage(this.finalCritRate + amount, this.finalCritDamage, this.finalActualAttack, this.finalElementDamagePercent + this.skillDamagePercent);
           break;
         case 'critDamage':
-          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage + amount, this.finalActualAttack, this.finalElementDamagePercent + this.skillDamagePercent) * this.skillMultiplier;
+          newDamage = this.calculateNewDamage(this.finalCritRate, this.finalCritDamage + amount, this.finalActualAttack, this.finalElementDamagePercent + this.skillDamagePercent);
           break;
         case 'attackPercent': {
           const newAttack = this.calculateActualAttack(this.finalAttackPercent + amount, this.finalAttackFixed);
-          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, newAttack, this.finalElementDamagePercent + this.skillDamagePercent) * this.skillMultiplier;
+          newDamage = this.calculateNewDamage(this.finalCritRate, this.finalCritDamage, newAttack, this.finalElementDamagePercent + this.skillDamagePercent);
           break;
         }
         case 'attackFixed': {
           const newAttack = this.calculateActualAttack(this.finalAttackPercent, this.finalAttackFixed + amount);
-          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, newAttack, this.finalElementDamagePercent + this.skillDamagePercent) * this.skillMultiplier;
+          newDamage = this.calculateNewDamage(this.finalCritRate, this.finalCritDamage, newAttack, this.finalElementDamagePercent + this.skillDamagePercent);
           break;
         }
         case 'elementDamagePercent':
-          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, this.finalActualAttack, this.finalElementDamagePercent + this.skillDamagePercent + amount) * this.skillMultiplier;
+          newDamage = this.calculateNewDamage(this.finalCritRate, this.finalCritDamage, this.finalActualAttack, this.finalElementDamagePercent + this.skillDamagePercent + amount);
           break;
         default:
           newDamage = originalDamage;
       }
 
       return (newDamage - originalDamage) / originalDamage;
+    },
+    calculateNewDamage(critRate, critDamage, actualAttack, damagePercent) {
+      let damage = this.calculateDamageBase(critRate, critDamage, actualAttack, damagePercent) * this.skillMultiplier;
+      damage *= (1 + this.skillPenetrationPercent);
+      damage *= (1 - this.elementResistancePercent);
+      return damage;
     }
   }
 };
