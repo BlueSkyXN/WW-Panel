@@ -2,35 +2,31 @@
   <v-container>
     <h1 class="text-center mb-6">攻击x暴击x元素伤害的基值计算器</h1>
 
-    <v-row>
-      <v-col cols="12" md="6" v-for="(group, index) in parameterGroups" :key="index">
-        <v-card>
-          <v-card-title>{{ group.title }}</v-card-title>
-          <v-card-text>
-            <v-row>
-              <v-col cols="12" sm="6" v-for="field in group.fields" :key="field.label">
-                <v-text-field
-                  :label="field.label"
-                  v-model.number="field.value"
-                  type="number"
-                  :step="field.step"
-                  outlined
-                  dense
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+    <v-card v-for="(group, groupIndex) in parameterGroups" :key="groupIndex" class="mb-6">
+      <v-card-title>{{ group.title }}</v-card-title>
+      <v-card-text>
+        <v-row>
+          <v-col cols="12" sm="4" md="2" v-for="(field, fieldIndex) in group.fields" :key="fieldIndex">
+            <v-text-field
+              :label="field.label"
+              v-model.number="field.value"
+              type="number"
+              :step="field.step"
+              outlined
+              dense
+            ></v-text-field>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
 
     <v-card class="mt-6">
       <v-card-title>计算结果</v-card-title>
       <v-card-text>
         <v-row>
-          <v-col cols="12" sm="6" md="4" v-for="(result, index) in calculatedResults" :key="index">
+          <v-col cols="12" sm="4" md="2" v-for="(result, index) in calculatedResults" :key="index">
             <v-sheet rounded elevation="1" class="pa-4">
-              <div class="text-subtitle-1">{{ result.label }}</div>
+              <div class="text-subtitle-2">{{ result.label }}</div>
               <div class="text-h6">{{ result.value.toFixed(3) }}</div>
             </v-sheet>
           </v-col>
@@ -137,8 +133,8 @@ export default {
   methods: {
     sumFieldValues(fieldName) {
       return this.parameterGroups.reduce((sum, group) => {
-        const field = group.fields.find(f => f.label.includes(fieldName));
-        return sum + (field ? field.value : 0);
+        const fields = group.fields.filter(f => f.label.includes(fieldName));
+        return sum + fields.reduce((fieldSum, field) => fieldSum + field.value, 0);
       }, 0);
     },
     getFieldValue(fieldName) {
@@ -149,7 +145,7 @@ export default {
       return 0;
     }
   }
-}
+};
 </script>
 
 <style scoped>
