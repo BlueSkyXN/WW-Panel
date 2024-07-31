@@ -10,7 +10,7 @@
           :label="field.label"
           :type="field.type"
           :step="field.step"
-          v-model="field.value"
+          v-model.number="field.value"
         ></v-text-field>
       </v-col>
     </v-row>
@@ -24,7 +24,7 @@
           :label="field.label"
           :type="field.type"
           :step="field.step"
-          v-model="field.value"
+          v-model.number="field.value"
         ></v-text-field>
       </v-col>
     </v-row>
@@ -38,7 +38,7 @@
           :label="field.label"
           :type="field.type"
           :step="field.step"
-          v-model="field.value"
+          v-model.number="field.value"
         ></v-text-field>
       </v-col>
     </v-row>
@@ -52,7 +52,7 @@
           :label="field.label"
           :type="field.type"
           :step="field.step"
-          v-model="field.value"
+          v-model.number="field.value"
         ></v-text-field>
       </v-col>
     </v-row>
@@ -66,7 +66,7 @@
           :label="field.label"
           :type="field.type"
           :step="field.step"
-          v-model="field.value"
+          v-model.number="field.value"
         ></v-text-field>
       </v-col>
     </v-row>
@@ -77,13 +77,13 @@
     <v-card>
       <v-card-title>计算结果</v-card-title>
       <v-card-text>
-        <p>最终暴击率: {{ finalCritRate }}</p>
-        <p>最终暴击伤害: {{ finalCritDamage }}</p>
-        <p>最终攻击百分比: {{ finalAttackPercent }}</p>
+        <p>最终暴击率: {{ finalCritRate.toFixed(3) }}</p>
+        <p>最终暴击伤害: {{ finalCritDamage.toFixed(3) }}</p>
+        <p>最终攻击百分比: {{ finalAttackPercent.toFixed(3) }}</p>
         <p>最终攻击固定值: {{ finalAttackFixed }}</p>
-        <p>最终元素伤害百分比: {{ finalElementDamagePercent }}</p>
-        <p>最终实际攻击: {{ finalActualAttack }}</p>
-        <p>最终实际伤害基值: {{ finalDamageBase }}</p>
+        <p>最终元素伤害百分比: {{ finalElementDamagePercent.toFixed(3) }}</p>
+        <p>最终实际攻击: {{ finalActualAttack.toFixed(3) }}</p>
+        <p>最终实际伤害基值: {{ finalDamageBase.toFixed(3) }}</p>
       </v-card-text>
     </v-card>
   </v-container>
@@ -130,19 +130,41 @@ export default {
   },
   computed: {
     finalCritRate() {
-      return this.basicInfo[0].value + this.talents[0].value + this.weapons[0].value + this.relics[0].value + this.others[0].value;
+      return (
+        this.basicInfo[0].value + 
+        this.talents[0].value + 
+        this.weapons[0].value + 
+        this.relics[0].value + 
+        this.others[0].value
+      );
     },
     finalCritDamage() {
-      return this.basicInfo[1].value + this.talents[1].value + this.weapons[1].value + this.relics[1].value + this.others[1].value;
+      return (
+        this.basicInfo[1].value + 
+        this.talents[1].value + 
+        this.weapons[1].value + 
+        this.relics[1].value + 
+        this.others[1].value
+      );
     },
     finalAttackPercent() {
-      return this.talents[2].value + this.weapons[2].value + this.relics[2].value + this.others[2].value;
+      return (
+        this.talents[2].value + 
+        this.weapons[2].value + 
+        this.relics[2].value + 
+        this.others[2].value
+      );
     },
     finalAttackFixed() {
       return this.relics[3].value + this.others[3].value;
     },
     finalElementDamagePercent() {
-      return this.talents[3].value + this.weapons[3].value + this.relics[4].value + this.others[4].value;
+      return (
+        this.talents[3].value + 
+        this.weapons[3].value + 
+        this.relics[4].value + 
+        this.others[4].value
+      );
     },
     finalActualAttack() {
       const baseAttack = this.basicInfo[2].value + this.basicInfo[3].value;
@@ -150,7 +172,9 @@ export default {
     },
     finalDamageBase() {
       const actualAttack = this.finalActualAttack;
-      return (actualAttack * this.finalCritRate * this.finalCritDamage + actualAttack * (1 - this.finalCritRate)) * (1 + this.finalElementDamagePercent);
+      return (
+        (actualAttack * this.finalCritRate * this.finalCritDamage + actualAttack * (1 - this.finalCritRate)) * (1 + this.finalElementDamagePercent)
+      );
     }
   }
 }
