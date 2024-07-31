@@ -2,23 +2,48 @@
   <v-container>
     <h1 class="text-center mb-6">攻击x暴击x元素伤害的基值计算器</h1>
 
-    <v-card v-for="(group, groupIndex) in parameterGroups" :key="groupIndex" class="mb-6">
-      <v-card-title>{{ group.title }}</v-card-title>
-      <v-card-text>
-        <v-row>
-          <v-col cols="12" sm="4" md="2" v-for="(field, fieldIndex) in group.fields" :key="fieldIndex">
-            <v-text-field
-              :label="field.label"
-              v-model.number="field.value"
-              type="number"
-              :step="field.step"
-              outlined
-              dense
-            ></v-text-field>
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
+    <v-row>
+      <v-col cols="12" md="6">
+        <v-card v-for="(group, groupIndex) in parameterGroups.slice(0, 3)" :key="groupIndex" class="mb-6">
+          <v-card-title>{{ group.title }}</v-card-title>
+          <v-card-text>
+            <v-row>
+              <v-col cols="6" v-for="(field, fieldIndex) in group.fields" :key="fieldIndex">
+                <v-text-field
+                  :label="field.label"
+                  v-model.number="field.value"
+                  type="number"
+                  :step="field.step"
+                  outlined
+                  dense
+                  style="width: 50%;"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-card v-for="(group, groupIndex) in parameterGroups.slice(3)" :key="groupIndex" class="mb-6">
+          <v-card-title>{{ group.title }}</v-card-title>
+          <v-card-text>
+            <v-row>
+              <v-col cols="6" v-for="(field, fieldIndex) in group.fields" :key="fieldIndex">
+                <v-text-field
+                  :label="field.label"
+                  v-model.number="field.value"
+                  type="number"
+                  :step="field.step"
+                  outlined
+                  dense
+                  style="width: 50%;"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
 
     <v-card class="mt-6">
       <v-card-title>计算结果</v-card-title>
@@ -35,13 +60,13 @@
     </v-card>
 
     <v-card class="mt-6">
-      <v-card-title>预测提升率</v-card-title>
+      <v-card-title>预测实际伤害基值提升率</v-card-title>
       <v-card-text>
         <v-row>
           <v-col cols="12" sm="4" md="2" v-for="(improvement, index) in predictedImprovements" :key="index">
             <v-sheet rounded elevation="1" class="pa-4">
               <div class="text-subtitle-2">{{ improvement.label }}</div>
-              <div class="text-h6">{{ (improvement.value * 100).toFixed(2) }}%</div>
+              <div class="text-h6">{{ (improvement.value * 100).toFixed(4) }}%</div>
             </v-sheet>
           </v-col>
         </v-row>
@@ -102,6 +127,13 @@ export default {
             { label: '其他攻击固定值', value: 0.00, step: 1 },
             { label: '其他元素伤害百分比', value: 0.10, step: 0.01 }
           ]
+        },
+        {
+          title: '技能参数',
+          fields: [
+            { label: '目标技能倍率', value: 1.00, step: 0.01 },
+            { label: '目标技能伤害百分比', value: 0.00, step: 0.01 }
+          ]
         }
       ]
     };
@@ -129,6 +161,16 @@ export default {
     finalDamageBase() {
       return this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, this.finalActualAttack, this.finalElementDamagePercent);
     },
+    skillMultiplier() {
+      return this.getFieldValue('目标技能倍率');
+    },
+    skillDamagePercent() {
+      return this.getFieldValue('目标技能伤害百分比');
+    },
+    finalSkillDamage() {
+      const totalDamagePercent = this.finalElementDamagePercent + this.skillDamagePercent;
+      return this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, this.finalActualAttack, totalDamagePercent) * this.skillMultiplier;
+    },
     calculatedResults() {
       return [
         { label: '最终暴击率', value: this.finalCritRate },
@@ -137,7 +179,8 @@ export default {
         { label: '最终攻击固定值', value: this.finalAttackFixed },
         { label: '最终元素伤害百分比', value: this.finalElementDamagePercent },
         { label: '最终实际攻击', value: this.finalActualAttack },
-        { label: '最终实际伤害基值', value: this.finalDamageBase }
+        { label: '最终实际伤害基值', value: this.finalDamageBase },
+        { label: '目标技能伤害', value: this.finalSkillDamage }
       ];
     },
     predictedImprovements() {
@@ -164,36 +207,36 @@ export default {
       }
       return 0;
     },
-    calculateDamageBase(critRate, critDamage, actualAttack, elementDamagePercent) {
-      return (actualAttack * critRate * critDamage + actualAttack * (1 - critRate)) * (1 + elementDamagePercent);
+    calculateDamageBase(critRate, critDamage, actualAttack, damagePercent) {
+      return (actualAttack * critRate * critDamage + actualAttack * (1 - critRate)) * (1 + damagePercent);
     },
     calculateActualAttack(attackPercent, attackFixed) {
       const baseAttack = this.getFieldValue('角色攻击白值') + this.getFieldValue('武器攻击白值');
       return baseAttack * (1 + attackPercent) + attackFixed;
     },
     calculateImprovement(attribute, amount) {
-      const originalDamage = this.finalDamageBase;
+      const originalDamage = this.finalSkillDamage;
       let newDamage;
 
       switch (attribute) {
         case 'critRate':
-          newDamage = this.calculateDamageBase(this.finalCritRate + amount, this.finalCritDamage, this.finalActualAttack, this.finalElementDamagePercent);
+          newDamage = this.calculateDamageBase(this.finalCritRate + amount, this.finalCritDamage, this.finalActualAttack, this.finalElementDamagePercent + this.skillDamagePercent) * this.skillMultiplier;
           break;
         case 'critDamage':
-          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage + amount, this.finalActualAttack, this.finalElementDamagePercent);
+          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage + amount, this.finalActualAttack, this.finalElementDamagePercent + this.skillDamagePercent) * this.skillMultiplier;
           break;
         case 'attackPercent': {
           const newAttack = this.calculateActualAttack(this.finalAttackPercent + amount, this.finalAttackFixed);
-          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, newAttack, this.finalElementDamagePercent);
+          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, newAttack, this.finalElementDamagePercent + this.skillDamagePercent) * this.skillMultiplier;
           break;
         }
         case 'attackFixed': {
           const newAttack = this.calculateActualAttack(this.finalAttackPercent, this.finalAttackFixed + amount);
-          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, newAttack, this.finalElementDamagePercent);
+          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, newAttack, this.finalElementDamagePercent + this.skillDamagePercent) * this.skillMultiplier;
           break;
         }
         case 'elementDamagePercent':
-          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, this.finalActualAttack, this.finalElementDamagePercent + amount);
+          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, this.finalActualAttack, this.finalElementDamagePercent + this.skillDamagePercent + amount) * this.skillMultiplier;
           break;
         default:
           newDamage = originalDamage;
