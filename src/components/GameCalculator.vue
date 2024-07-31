@@ -8,7 +8,7 @@
           <v-card-title>{{ group.title }}</v-card-title>
           <v-card-text>
             <v-row>
-              <v-col cols="6" v-for="(field, fieldIndex) in group.fields" :key="fieldIndex">
+              <v-col cols="4" v-for="(field, fieldIndex) in group.fields" :key="fieldIndex">
                 <v-text-field
                   :label="field.label"
                   v-model.number="field.value"
@@ -16,7 +16,6 @@
                   :step="field.step"
                   outlined
                   dense
-                  style="width: 50%;"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -28,7 +27,7 @@
           <v-card-title>{{ group.title }}</v-card-title>
           <v-card-text>
             <v-row>
-              <v-col cols="6" v-for="(field, fieldIndex) in group.fields" :key="fieldIndex">
+              <v-col cols="4" v-for="(field, fieldIndex) in group.fields" :key="fieldIndex">
                 <v-text-field
                   :label="field.label"
                   v-model.number="field.value"
@@ -36,7 +35,6 @@
                   :step="field.step"
                   outlined
                   dense
-                  style="width: 50%;"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -49,7 +47,7 @@
       <v-card-title>计算结果</v-card-title>
       <v-card-text>
         <v-row>
-          <v-col cols="12" sm="4" md="2" v-for="(result, index) in calculatedResults" :key="index">
+          <v-col cols="12" sm="4" md="3" lg="2" v-for="(result, index) in calculatedResults" :key="index">
             <v-sheet rounded elevation="1" class="pa-4">
               <div class="text-subtitle-2">{{ result.label }}</div>
               <div class="text-h6">{{ result.value.toFixed(3) }}</div>
@@ -63,7 +61,7 @@
       <v-card-title>预测实际伤害基值提升率</v-card-title>
       <v-card-text>
         <v-row>
-          <v-col cols="12" sm="4" md="2" v-for="(improvement, index) in predictedImprovements" :key="index">
+          <v-col cols="12" sm="4" md="3" lg="2" v-for="(improvement, index) in predictedImprovements" :key="index">
             <v-sheet rounded elevation="1" class="pa-4">
               <div class="text-subtitle-2">{{ improvement.label }}</div>
               <div class="text-h6">{{ (improvement.value * 100).toFixed(4) }}%</div>
