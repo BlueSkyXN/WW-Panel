@@ -4,7 +4,7 @@
     <v-divider></v-divider>
     
     <h3>基本信息</h3>
-    <v-row>
+    <v-row align="start" justify="start">
       <v-col cols="12" md="6" v-for="field in basicInfo" :key="field.model">
         <v-text-field
           :label="field.label"
@@ -18,7 +18,7 @@
     <v-divider></v-divider>
     
     <h3>天赋</h3>
-    <v-row>
+    <v-row align="start" justify="start">
       <v-col cols="12" md="6" v-for="field in talents" :key="field.model">
         <v-text-field
           :label="field.label"
@@ -32,7 +32,7 @@
     <v-divider></v-divider>
     
     <h3>武器</h3>
-    <v-row>
+    <v-row align="start" justify="start">
       <v-col cols="12" md="6" v-for="field in weapons" :key="field.model">
         <v-text-field
           :label="field.label"
@@ -46,7 +46,7 @@
     <v-divider></v-divider>
     
     <h3>声骸</h3>
-    <v-row>
+    <v-row align="start" justify="start">
       <v-col cols="12" md="6" v-for="field in relics" :key="field.model">
         <v-text-field
           :label="field.label"
@@ -60,7 +60,7 @@
     <v-divider></v-divider>
     
     <h3>其他</h3>
-    <v-row>
+    <v-row align="start" justify="start">
       <v-col cols="12" md="6" v-for="field in others" :key="field.model">
         <v-text-field
           :label="field.label"
