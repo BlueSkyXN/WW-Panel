@@ -73,19 +73,20 @@
     
     <v-divider></v-divider>
 
-    <v-col cols="12" md="6">
-      <v-divider vertical></v-divider>
-    </v-col>
+    <v-row>
+      <v-col cols="12" md="6">
+        <v-divider vertical></v-divider>
+      </v-col>
 
-    <v-col cols="12" md="6">
-      <v-card>
-        <v-card-title>计算结果</v-card-title>
-        <v-card-text>
-          <p>最终实际攻击: {{ finalActualAttack.toFixed(3) }}</p>
-          <p>最终实际伤害基值: {{ finalDamageBase.toFixed(3) }}</p>
-        </v-card-text>
-      </v-card>
-    </v-col>
+      <v-col cols="12" md="6">
+        <v-card>
+          <v-card-title>计算结果</v-card-title>
+          <v-card-text>
+            <p>最终实际攻击: {{ finalActualAttack.toFixed(3) }}</p>
+            <p>最终实际伤害基值: {{ finalDamageBase.toFixed(3) }}</p>
+          </v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
 
     <v-divider></v-divider>
