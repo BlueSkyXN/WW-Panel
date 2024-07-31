@@ -182,17 +182,21 @@ export default {
         case 'critDamage':
           newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage + amount, this.finalActualAttack, this.finalElementDamagePercent);
           break;
-        case 'attackPercent':
+        case 'attackPercent': {
           const newAttack = this.calculateActualAttack(this.finalAttackPercent + amount, this.finalAttackFixed);
           newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, newAttack, this.finalElementDamagePercent);
           break;
-        case 'attackFixed':
-          const newAttackFixed = this.calculateActualAttack(this.finalAttackPercent, this.finalAttackFixed + amount);
-          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, newAttackFixed, this.finalElementDamagePercent);
+        }
+        case 'attackFixed': {
+          const newAttack = this.calculateActualAttack(this.finalAttackPercent, this.finalAttackFixed + amount);
+          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, newAttack, this.finalElementDamagePercent);
           break;
+        }
         case 'elementDamagePercent':
           newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, this.finalActualAttack, this.finalElementDamagePercent + amount);
           break;
+        default:
+          newDamage = originalDamage;
       }
 
       return (newDamage - originalDamage) / originalDamage;
