@@ -33,6 +33,20 @@
         </v-row>
       </v-card-text>
     </v-card>
+
+    <v-card class="mt-6">
+      <v-card-title>预测提升率</v-card-title>
+      <v-card-text>
+        <v-row>
+          <v-col cols="12" sm="4" md="2" v-for="(improvement, index) in predictedImprovements" :key="index">
+            <v-sheet rounded elevation="1" class="pa-4">
+              <div class="text-subtitle-2">{{ improvement.label }}</div>
+              <div class="text-h6">{{ (improvement.value * 100).toFixed(2) }}%</div>
+            </v-sheet>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
   </v-container>
 </template>
 
@@ -113,10 +127,7 @@ export default {
       return baseAttack * (1 + this.finalAttackPercent) + this.finalAttackFixed;
     },
     finalDamageBase() {
-      const actualAttack = this.finalActualAttack;
-      return (
-        (actualAttack * this.finalCritRate * this.finalCritDamage + actualAttack * (1 - this.finalCritRate)) * (1 + this.finalElementDamagePercent)
-      );
+      return this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, this.finalActualAttack, this.finalElementDamagePercent);
     },
     calculatedResults() {
       return [
@@ -127,6 +138,15 @@ export default {
         { label: '最终元素伤害百分比', value: this.finalElementDamagePercent },
         { label: '最终实际攻击', value: this.finalActualAttack },
         { label: '最终实际伤害基值', value: this.finalDamageBase }
+      ];
+    },
+    predictedImprovements() {
+      return [
+        { label: '提升1%暴击率', value: this.calculateImprovement('critRate', 0.01) },
+        { label: '提升1%暴击伤害', value: this.calculateImprovement('critDamage', 0.01) },
+        { label: '提升1%攻击百分比', value: this.calculateImprovement('attackPercent', 0.01) },
+        { label: '提升10点攻击固定值', value: this.calculateImprovement('attackFixed', 10) },
+        { label: '提升1%元素伤害百分比', value: this.calculateImprovement('elementDamagePercent', 0.01) }
       ];
     }
   },
@@ -143,6 +163,39 @@ export default {
         if (field) return field.value;
       }
       return 0;
+    },
+    calculateDamageBase(critRate, critDamage, actualAttack, elementDamagePercent) {
+      return (actualAttack * critRate * critDamage + actualAttack * (1 - critRate)) * (1 + elementDamagePercent);
+    },
+    calculateActualAttack(attackPercent, attackFixed) {
+      const baseAttack = this.getFieldValue('角色攻击白值') + this.getFieldValue('武器攻击白值');
+      return baseAttack * (1 + attackPercent) + attackFixed;
+    },
+    calculateImprovement(attribute, amount) {
+      const originalDamage = this.finalDamageBase;
+      let newDamage;
+
+      switch (attribute) {
+        case 'critRate':
+          newDamage = this.calculateDamageBase(this.finalCritRate + amount, this.finalCritDamage, this.finalActualAttack, this.finalElementDamagePercent);
+          break;
+        case 'critDamage':
+          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage + amount, this.finalActualAttack, this.finalElementDamagePercent);
+          break;
+        case 'attackPercent':
+          const newAttack = this.calculateActualAttack(this.finalAttackPercent + amount, this.finalAttackFixed);
+          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, newAttack, this.finalElementDamagePercent);
+          break;
+        case 'attackFixed':
+          const newAttackFixed = this.calculateActualAttack(this.finalAttackPercent, this.finalAttackFixed + amount);
+          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, newAttackFixed, this.finalElementDamagePercent);
+          break;
+        case 'elementDamagePercent':
+          newDamage = this.calculateDamageBase(this.finalCritRate, this.finalCritDamage, this.finalActualAttack, this.finalElementDamagePercent + amount);
+          break;
+      }
+
+      return (newDamage - originalDamage) / originalDamage;
     }
   }
 };
